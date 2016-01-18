@@ -15,6 +15,8 @@ var count = 0;
 io.on('connection', function(socket) {
 	count++;
 
+	var nickname = "";
+
 	// Welcome the user
 	if(count === 1) {
 		socket.emit('welcome', 'Welcome to chatroom, you are the first to arrive here.');
@@ -24,19 +26,30 @@ io.on('connection', function(socket) {
 		socket.emit('welcome', 'Welcome to chatroom, there are ' + (count - 1) + ' other people is the room.');
 	}
 
+	// Nickname
+	socket.on('nickname', function(name){
+		console.log('nickname: ' + name);
+		nickname = name;
+		socket.emit('nickname', 'Your nickname is set to ' + nickname);
+	});
+
 	// Broadcasting means sending a message to everyone else except for the socket that starts it.
 	socket.broadcast.emit('connected', {
 		number: count
 	});
     console.log('new user connected');
     socket.on('chat message', function(msg) {
-        console.log('message: ' + msg);
-        io.emit('chat message', msg);
+        console.log(nickname + ' message: ' + msg);
+        io.emit('chat message', {
+        	nickname: nickname,
+        	message: msg
+        });
     });
     socket.on('disconnect', function() {
-        console.log('user disconnected');
+        console.log('user ' + nickname + ' disconnected');
         count--;
         io.sockets.emit('disconnected', {
+        	nickname: nickname,
             number: count
         });
     });
