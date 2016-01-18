@@ -64,6 +64,10 @@
         font-weight: bold;
         color: #000080;
     }
+
+    .self-message {
+        text-align: right;
+    }
     </style>
 </head>
 
@@ -89,6 +93,10 @@
         $('#messages').append($('<li>').text(msg).addClass("system-message"));
     }
 
+    function appendSelfMessage(msg) {
+        $('#messages').append($('<li>').text(msg).addClass("self-message"));
+    }
+
     var socket = io();
     $('#nickname').submit(function() {
         socket.emit('nickname', $('#name-text').val());
@@ -99,7 +107,9 @@
         return false;
     });
     $('#message').submit(function() {
-        socket.emit('chat message', $('#message-text').val());
+        var message = $('#message-text').val();
+        socket.emit('chat message', message);
+        appendSelfMessage(message);
         $('#message-text').val('');
         return false;
     });
