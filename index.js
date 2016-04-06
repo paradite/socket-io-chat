@@ -14,7 +14,10 @@ var count = 0;
 
 io.on('connection', function(socket) {
 	count++;
-
+	console.log("ip");
+	console.dir(socket.request.connection.remoteAddress);
+	console.dir(socket.request.socket.remoteAddress);
+	console.dir(socket.request.socket._peername);
 	var nickname = "";
 
 	// Welcome the user
@@ -37,7 +40,7 @@ io.on('connection', function(socket) {
 	socket.broadcast.emit('connected', {
 		number: count
 	});
-    console.log('new user connected');
+    console.log('new user connected ' + socket.id);
     socket.on('chat message', function(msg) {
         console.log(nickname + ' message: ' + msg);
         socket.broadcast.emit('chat message', {
